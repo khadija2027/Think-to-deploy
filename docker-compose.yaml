@@ -1,0 +1,192 @@
+services:
+  # ========================================
+  # SERVICE OPENLDAP (authentification)
+  # ========================================
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: t2d-openldap
+    environment:
+      - LDAP_ORGANISATION=Example Corp
+      - LDAP_DOMAIN=example.com
+      - LDAP_ADMIN_PASSWORD=${LDAP_ADMIN_PASSWORD:-admin123}
+      - LDAP_BASE_DN=dc=example,dc=com
+      - LDAP_TLS=${LDAP_TLS:-true}
+      - LDAP_REPLICATION=false
+      - LDAP_LOG_LEVEL=256
+    volumes:
+      - ./ad-docker-fastapi/ldap_data:/var/lib/ldap
+      - ./ad-docker-fastapi/ldap_config:/etc/ldap/slapd.d
+      - ./ad-docker-fastapi/scripts:/scripts
+      - ./ad-docker-fastapi/ldif_files:/container/service/slapd/assets/config/bootstrap/ldif/custom
+    ports:
+      - "389:389"  # ← AJOUTER le port 389 pour phpLDAPadmin
+      - "636:636"
+    networks:
+      - t2d-network
+    restart: unless-stopped
+    command: --copy-service --loglevel debug
+
+  # ========================================
+  # SERVICE PHPLDAPADMIN (interface web)
+  # ========================================
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: t2d-phpldapadmin
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=t2d-openldap
+      - PHPLDAPADMIN_HTTPS=false
+    ports:
+      - "8080:80"
+    depends_on:
+      - openldap
+    networks:
+      - t2d-network
+    restart: unless-stopped
+
+  # ========================================
+  # SERVICE POSTGRES (base de données Airflow)
+  # ========================================
+  postgres:
+    image: postgres:15
+    container_name: t2d-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-airflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airflow}
+      POSTGRES_DB: ${POSTGRES_DB:-airflow}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - t2d-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-airflow}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  # ========================================
+  # SERVICE FASTAPI (authentification)
+  # ========================================
+  fastapi:
+    build:
+      context: ./fastapi-app
+      dockerfile: Dockerfile
+    container_name: t2d-fastapi
+    ports:
+      - "8000:8000"
+    environment:
+      # LDAP Configuration - CORRIGÉ
+      - LDAP_SERVER=t2d-openldap  # ← CORRIGER le nom du container
+      - LDAP_PORT=389
+      - LDAP_USE_TLS=false
+      - LDAP_BASE_DN=dc=example,dc=com
+      - LDAP_USER_DN=ou=users,dc=example,dc=com
+      - LDAP_GROUP_DN=ou=groups,dc=example,dc=com
+      - LDAP_BIND_DN=cn=admin,dc=example,dc=com
+      - LDAP_BIND_PASSWORD=admin123
+      - JWT_SECRET_KEY=ma-cle-secrete-pour-developpement-changez-moi
+      - JWT_ALGORITHM=HS256
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+    volumes:
+      - ./fastapi-app:/app
+      - ./T2D_Chatbot_for_HR:/T2D_Chatbot_for_HR
+    depends_on:
+      - openldap
+    networks:
+      - t2d-network
+    restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ========================================
+  # SERVICE AIRFLOW INITIALISATION (CORRIGÉ)
+  # ========================================
+  airflow-init:
+    build:
+      context: ./T2D_Chatbot_for_HR
+      dockerfile: Dockerfile
+    container_name: t2d-airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow  # ← CORRIGER
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./T2D_Chatbot_for_HR/dags:/opt/airflow/dags
+      - ./T2D_Chatbot_for_HR/logs:/opt/airflow/logs
+      - ./T2D_Chatbot_for_HR/plugins:/opt/airflow/plugins
+    depends_on:
+      - postgres
+    networks:
+      - t2d-network
+    restart: "no"
+    command: bash -c "echo '🔧 Initialisation Airflow...'; airflow db migrate; airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || echo '✅ Utilisateur déjà créé'; echo '✅ Initialisation terminée'"
+
+  # ========================================
+  # SERVICE AIRFLOW WEBSERVER (CORRIGÉ)
+  # ========================================
+  airflow-webserver:
+    build:
+      context: ./T2D_Chatbot_for_HR
+      dockerfile: Dockerfile
+    container_name: t2d-airflow-webserver
+    ports:
+      - "9080:8080"
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow  # ← CORRIGER
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_WEBSERVER_SECRET_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./T2D_Chatbot_for_HR/dags:/opt/airflow/dags
+      - ./T2D_Chatbot_for_HR/logs:/opt/airflow/logs
+      - ./T2D_Chatbot_for_HR/plugins:/opt/airflow/plugins
+    depends_on:
+      - postgres
+      - airflow-init
+    networks:
+      - t2d-network
+    restart: always
+    command: webserver
+
+  # ========================================
+  # SERVICE AIRFLOW SCHEDULER (CORRIGÉ)
+  # ========================================
+  airflow-scheduler:
+    build:
+      context: ./T2D_Chatbot_for_HR
+      dockerfile: Dockerfile
+    container_name: t2d-airflow-scheduler
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow  # ← CORRIGER
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./T2D_Chatbot_for_HR/dags:/opt/airflow/dags
+      - ./T2D_Chatbot_for_HR/logs:/opt/airflow/logs
+      - ./T2D_Chatbot_for_HR/plugins:/opt/airflow/plugins
+    depends_on:
+      - postgres
+      - airflow-init
+    networks:
+      - t2d-network
+    restart: always
+    command: scheduler
+
+volumes:
+  postgres-data:
+
+networks:
+  t2d-network:
+    driver: bridge

@@ -1,0 +1,40 @@
+# Groupe des administrateurs
+dn: cn=admins,ou=groups,dc=example,dc=com
+objectClass: posixGroup
+objectClass: top
+cn: admins
+gidNumber: 2000
+memberUid: admin
+description: Administrateurs système
+
+# Groupe des développeurs
+dn: cn=developers,ou=groups,dc=example,dc=com
+objectClass: posixGroup
+objectClass: top
+cn: developers
+gidNumber: 2001
+memberUid: dev1
+memberUid: dev2
+description: Développeurs d'applications
+
+# Groupe des utilisateurs
+dn: cn=users,ou=groups,dc=example,dc=com
+objectClass: posixGroup
+objectClass: top
+cn: users
+gidNumber: 2002
+memberUid: admin
+memberUid: dev1
+memberUid: dev2
+memberUid: testuser
+description: Tous les utilisateurs
+
+# Groupe support
+dn: cn=support,ou=groups,dc=example,dc=com
+objectClass: posixGroup
+objectClass: top
+cn: support
+gidNumber: 2003
+memberUid: dev2
+memberUid: testuser
+description: Équipe support

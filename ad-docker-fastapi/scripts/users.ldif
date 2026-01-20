@@ -1,0 +1,63 @@
+# Utilisateur administrateur de l'application
+dn: uid=admin,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: admin
+cn: Administrateur
+sn: System
+givenName: Admin
+mail: admin@example.com
+userPassword: {SSHA}i3Lc8ZjQJcLd1iVrG8Wj7K4mN5s7hJYy
+uidNumber: 1000
+gidNumber: 1000
+homeDirectory: /home/admin
+loginShell: /bin/bash
+
+# Utilisateur développeur 1
+dn: uid=dev1,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: dev1
+cn: Développeur Un
+sn: Dev
+givenName: User1
+mail: dev1@example.com
+userPassword: {SSHA}i3Lc8ZjQJcLd1iVrG8Wj7K4mN5s7hJYy
+uidNumber: 1001
+gidNumber: 1001
+homeDirectory: /home/dev1
+loginShell: /bin/bash
+
+# Utilisateur développeur 2
+dn: uid=dev2,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: dev2
+cn: Développeur Deux
+sn: Dev
+givenName: User2
+mail: dev2@example.com
+userPassword: {SSHA}i3Lc8ZjQJcLd1iVrG8Wj7K4mN5s7hJYy
+uidNumber: 1002
+gidNumber: 1002
+homeDirectory: /home/dev2
+loginShell: /bin/bash
+
+# Utilisateur test
+dn: uid=testuser,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: testuser
+cn: Utilisateur Test
+sn: Test
+givenName: User
+mail: test@example.com
+userPassword: {SSHA}i3Lc8ZjQJcLd1iVrG8Wj7K4mN5s7hJYy
+uidNumber: 1003
+gidNumber: 1003
+homeDirectory: /home/testuser
+loginShell: /bin/bash

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Assistant RH</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #1f77b4, #1565c0);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .login-header i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .login-body {
+            padding: 2.5rem;
+        }
+
+        .form-floating {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control:focus {
+            border-color: #1f77b4;
+            box-shadow: 0 0 0 0.2rem rgba(31, 119, 180, 0.25);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #1f77b4, #1565c0);
+            border: none;
+            padding: 0.8rem;
+            font-weight: 600;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 119, 180, 0.4);
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .info-box h6 {
+            color: #1f77b4;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .user-example {
+            background: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid #1f77b4;
+        }
+
+        .user-example strong {
+            color: #1f77b4;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 2rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fas fa-user-shield"></i>
+            <h2>Connexion</h2>
+            <p class="mb-0">Assistant RH Intelligent</p>
+        </div>
+
+        <div class="login-body">
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/login">
+                <div class="form-floating">
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="username"
+                        name="username"
+                        placeholder="Nom d'utilisateur"
+                        required
+                        autofocus
+                    >
+                    <label for="username">
+                        <i class="fas fa-user me-2"></i>
+                        Nom d'utilisateur
+                    </label>
+                </div>
+
+                <div class="form-floating">
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        name="password"
+                        placeholder="Mot de passe"
+                        required
+                    >
+                    <label for="password">
+                        <i class="fas fa-lock me-2"></i>
+                        Mot de passe
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Se connecter
+                </button>
+            </form>
+
+            <div class="info-box">
+                <h6>
+                    <i class="fas fa-info-circle me-2"></i>
+                    Comptes de démonstration
+                </h6>
+
+                <div class="user-example">
+                    <strong>RH :</strong> rh_user / password123
+                </div>
+
+                <div class="user-example">
+                    <strong>CDI :</strong> user.cdi / password123
+                </div>
+
+                <div class="user-example">
+                    <strong>CDD :</strong> user.cdd / password123
+                </div>
+
+                <div class="user-example">
+                    <strong>Stagiaire :</strong> user.stagiaire / password123
+                </div>
+            </div>
+
+            <div class="footer-text">
+                <i class="fas fa-copyright"></i> 2025 Assistant RH Intelligent
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

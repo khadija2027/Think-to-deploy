@@ -1,0 +1,466 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard RH - Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .metric-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 4px solid var(--primary-color);
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 0;
+    }
+
+    .metric-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .metric-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        opacity: 0.7;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin-top: 1rem;
+    }
+
+    .conversation-item {
+        border-left: 3px solid #1f77b4;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 0 8px 8px 0;
+        transition: background 0.2s;
+    }
+
+    .conversation-item:hover {
+        background: #e9ecef;
+    }
+
+    .conversation-question {
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 0.5rem;
+    }
+
+    .conversation-response {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .conversation-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.5rem;
+    }
+
+    .tab-content {
+        padding: 2rem 0;
+    }
+
+    .stat-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .stat-badge.success {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .stat-badge.warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .stat-badge.danger {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .refresh-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>
+            <i class="fas fa-chart-line me-2"></i>
+            Dashboard Analytics RH
+        </h1>
+        <p class="text-muted">Vue d'ensemble des performances de l'assistant RH</p>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary" id="refreshData">
+            <i class="fas fa-sync-alt me-2"></i>
+            Actualiser
+        </button>
+    </div>
+</div>
+
+<!-- Métriques principales -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="metric-label">Taux de compréhension</div>
+                    <div class="metric-value">{{ "%.1f"|format(metrics.intent_accuracy) }}%</div>
+                </div>
+                <i class="fas fa-brain metric-icon"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="metric-card" style="border-left-color: #28a745;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="metric-label">Taux de validation</div>
+                    <div class="metric-value" style="color: #28a745;">{{ "%.1f"|format(metrics.validation_rate) }}%</div>
+                </div>
+                <i class="fas fa-check-circle metric-icon" style="color: #28a745;"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="metric-card" style="border-left-color: #ffc107;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="metric-label">Taux d'escalade</div>
+                    <div class="metric-value" style="color: #ffc107;">{{ "%.1f"|format(metrics.escalation_rate) }}%</div>
+                </div>
+                <i class="fas fa-exclamation-triangle metric-icon" style="color: #ffc107;"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="metric-card" style="border-left-color: #17a2b8;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="metric-label">Temps de réponse</div>
+                    <div class="metric-value" style="color: #17a2b8;">{{ "%.0f"|format(metrics.avg_response_time * 1000) }}ms</div>
+                </div>
+                <i class="fas fa-clock metric-icon" style="color: #17a2b8;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistiques secondaires -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                <h3>{{ metrics.active_users }}</h3>
+                <p class="text-muted mb-0">Utilisateurs actifs (24h)</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-comments fa-2x text-success mb-2"></i>
+                <h3>{{ metrics.total_conversations }}</h3>
+                <p class="text-muted mb-0">Conversations totales</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-smile fa-2x text-info mb-2"></i>
+                <h3>{{ "%.1f"|format(metrics.user_satisfaction) }}%</h3>
+                <p class="text-muted mb-0">Satisfaction utilisateur</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Onglets -->
+<ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="conversations-tab" data-bs-toggle="tab" data-bs-target="#conversations" type="button">
+            <i class="fas fa-comments me-2"></i>
+            Conversations récentes
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button">
+            <i class="fas fa-chart-bar me-2"></i>
+            Statistiques détaillées
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="feedback-tab" data-bs-toggle="tab" data-bs-target="#feedback" type="button">
+            <i class="fas fa-star me-2"></i>
+            Feedback utilisateurs
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="dashboardTabsContent">
+    <!-- Onglet Conversations -->
+    <div class="tab-pane fade show active" id="conversations" role="tabpanel">
+        <div class="row">
+            <div class="col-12">
+                <h4 class="mb-3">
+                    <i class="fas fa-history me-2"></i>
+                    10 dernières conversations
+                </h4>
+                
+                <div id="conversationsList">
+                    {% for conv in conversations %}
+                    <div class="conversation-item">
+                        <div class="conversation-question">
+                            <i class="fas fa-user me-2"></i>
+                            {{ conv.question }}
+                        </div>
+                        <div class="conversation-response">
+                            <i class="fas fa-robot me-2"></i>
+                            {{ conv.reponse[:200] }}{% if conv.reponse|length > 200 %}...{% endif %}
+                        </div>
+                        <div class="conversation-meta">
+                            <span>
+                                <i class="fas fa-user-tag me-1"></i>
+                                {{ conv.profil }}
+                            </span>
+                            <span>
+                                <i class="fas fa-percentage me-1"></i>
+                                {{ "%.1f"|format(conv.similarite * 100) }}% pertinence
+                            </span>
+                            <span>
+                                <i class="fas fa-clock me-1"></i>
+                                {{ conv.timestamp }}
+                            </span>
+                            {% if conv.feedback %}
+                            <span class="stat-badge {{ 'success' if conv.feedback == 'positive' else 'danger' }}">
+                                <i class="fas fa-thumbs-{{ 'up' if conv.feedback == 'positive' else 'down' }} me-1"></i>
+                                {{ conv.feedback }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onglet Statistiques -->
+    <div class="tab-pane fade" id="stats" role="tabpanel">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Distribution par profil
+                    </div>
+                    <div class="card-body">
+                        <canvas id="profilChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Distribution de similarité
+                    </div>
+                    <div class="card-body">
+                        <canvas id="similarityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-clock me-2"></i>
+                        Activité par heure
+                    </div>
+                    <div class="card-body">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onglet Feedback -->
+    <div class="tab-pane fade" id="feedback" role="tabpanel">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-thumbs-up fa-3x text-success mb-3"></i>
+                        <h2>{{ stats.feedback_distribution.positive }}</h2>
+                        <p class="text-muted">Feedbacks positifs</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-thumbs-down fa-3x text-danger mb-3"></i>
+                        <h2>{{ stats.feedback_distribution.negative }}</h2>
+                        <p class="text-muted">Feedbacks négatifs</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-question-circle fa-3x text-warning mb-3"></i>
+                        <h2>{{ stats.feedback_distribution.none }}</h2>
+                        <p class="text-muted">Sans feedback</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+// Données des statistiques
+const stats = {{ stats|tojson }};
+
+// Graphique par profil
+const profilCtx = document.getElementById('profilChart').getContext('2d');
+new Chart(profilCtx, {
+    type: 'pie',
+    data: {
+        labels: Object.keys(stats.by_profil),
+        datasets: [{
+            data: Object.values(stats.by_profil),
+            backgroundColor: [
+                '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Graphique de similarité
+const similarityCtx = document.getElementById('similarityChart').getContext('2d');
+new Chart(similarityCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Élevée (≥70%)', 'Moyenne (40-70%)', 'Faible (<40%)'],
+        datasets: [{
+            label: 'Nombre de conversations',
+            data: [
+                stats.similarity_distribution.high,
+                stats.similarity_distribution.medium,
+                stats.similarity_distribution.low
+            ],
+            backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Graphique horaire
+if (Object.keys(stats.by_hour).length > 0) {
+    const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+    const hours = Array.from({length: 24}, (_, i) => i);
+    const hourlyData = hours.map(h => stats.by_hour[h] || 0);
+    
+    new Chart(hourlyCtx, {
+        type: 'line',
+        data: {
+            labels: hours.map(h => `${h}h`),
+            datasets: [{
+                label: 'Conversations',
+                data: hourlyData,
+                borderColor: '#1f77b4',
+                backgroundColor: 'rgba(31, 119, 180, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Actualiser les données
+document.getElementById('refreshData').addEventListener('click', () => {
+    location.reload();
+});
+</script>
+{% endblock %}

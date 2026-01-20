@@ -1,0 +1,15 @@
+# Structure de base pour l'organisation
+dn: ou=users,dc=example,dc=com
+objectClass: organizationalUnit
+ou: users
+description: Utilisateurs de l'application
+
+dn: ou=groups,dc=example,dc=com
+objectClass: organizationalUnit
+ou: groups
+description: Groupes de l'application
+
+dn: ou=services,dc=example,dc=com
+objectClass: organizationalUnit
+ou: services
+description: Comptes de service

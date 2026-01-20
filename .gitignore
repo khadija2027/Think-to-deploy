@@ -1,0 +1,81 @@
+# Environnements
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Docker
+*.log
+.dockerignore
+
+# Volumes Docker
+ad-docker-fastapi/ldap_data/
+ad-docker-fastapi/ldap_config/
+ad-docker-fastapi/logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Airflow
+T2D_Chatbot_for_HR/logs/
+airflow.cfg
+unittests.cfg
+
+# Données Airflow
+T2D_Chatbot_for_HR/dataset/
+T2D_Chatbot_for_HR/anonymized_dataset/
+T2D_Chatbot_for_HR/parsed/
+T2D_Chatbot_for_HR/chunked/
+T2D_Chatbot_for_HR/failed/
+T2D_Chatbot_for_HR/logs_pipeline/
+T2D_Chatbot_for_HR/cache/
+T2D_Chatbot_for_HR/output/
+T2D_Chatbot_for_HR/backend/
+
+# Logs FastAPI
+fastapi-app/app.log

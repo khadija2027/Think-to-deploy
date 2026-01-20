@@ -1,0 +1,17 @@
+{
+  "95d0f27298adf3cce2e8f92e312904adf03a5870fd643b1fb3d321d7db7421e4": {
+    "filename": "DFS_mock_data_arabic.xlsx",
+    "processed_at": "2026-01-16T08:31:49.667623",
+    "size_bytes": 11531
+  },
+  "826deaa039f7c2c5186464ce9e125ab8a744c3a966ccd932b868f3533ebc747a": {
+    "filename": "employees.xlsx",
+    "processed_at": "2026-01-16T08:31:49.675143",
+    "size_bytes": 11052
+  },
+  "2d4fa190988fd3f891684bef8d743dd3762f8a7357acad62c3691a354c4529d6": {
+    "filename": "Manuel_Regles_RH_Complet.pdf",
+    "processed_at": "2026-01-16T08:31:49.695404",
+    "size_bytes": 547244
+  }
+}
