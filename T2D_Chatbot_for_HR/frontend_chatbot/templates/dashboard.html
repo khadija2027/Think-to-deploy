@@ -1,466 +1,735 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard RH - Analytics{% endblock %}
-
-{% block extra_css %}
-<style>
-    .metric-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        border-left: 4px solid var(--primary-color);
-        margin-bottom: 1rem;
-        transition: all 0.3s;
-    }
-
-    .metric-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .metric-value {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin: 0;
-    }
-
-    .metric-label {
-        color: #6c757d;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-
-    .metric-icon {
-        font-size: 2rem;
-        color: var(--primary-color);
-        opacity: 0.7;
-    }
-
-    .chart-container {
-        position: relative;
-        height: 300px;
-        margin-top: 1rem;
-    }
-
-    .conversation-item {
-        border-left: 3px solid #1f77b4;
-        padding: 1rem;
-        margin-bottom: 0.5rem;
-        background: #f8f9fa;
-        border-radius: 0 8px 8px 0;
-        transition: background 0.2s;
-    }
-
-    .conversation-item:hover {
-        background: #e9ecef;
-    }
-
-    .conversation-question {
-        font-weight: 600;
-        color: #212529;
-        margin-bottom: 0.5rem;
-    }
-
-    .conversation-response {
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    .conversation-meta {
-        display: flex;
-        gap: 1rem;
-        font-size: 0.85rem;
-        color: #6c757d;
-        margin-top: 0.5rem;
-    }
-
-    .tab-content {
-        padding: 2rem 0;
-    }
-
-    .stat-badge {
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-weight: 600;
-    }
-
-    .stat-badge.success {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .stat-badge.warning {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .stat-badge.danger {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    .refresh-btn {
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        z-index: 1000;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="row mb-4">
-    <div class="col">
-        <h1>
-            <i class="fas fa-chart-line me-2"></i>
-            Dashboard Analytics RH
-        </h1>
-        <p class="text-muted">Vue d'ensemble des performances de l'assistant RH</p>
-    </div>
-    <div class="col-auto">
-        <button class="btn btn-primary" id="refreshData">
-            <i class="fas fa-sync-alt me-2"></i>
-            Actualiser
-        </button>
-    </div>
-</div>
-
-<!-- Métriques principales -->
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="metric-card">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="metric-label">Taux de compréhension</div>
-                    <div class="metric-value">{{ "%.1f"|format(metrics.intent_accuracy) }}%</div>
-                </div>
-                <i class="fas fa-brain metric-icon"></i>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="metric-card" style="border-left-color: #28a745;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="metric-label">Taux de validation</div>
-                    <div class="metric-value" style="color: #28a745;">{{ "%.1f"|format(metrics.validation_rate) }}%</div>
-                </div>
-                <i class="fas fa-check-circle metric-icon" style="color: #28a745;"></i>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="metric-card" style="border-left-color: #ffc107;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="metric-label">Taux d'escalade</div>
-                    <div class="metric-value" style="color: #ffc107;">{{ "%.1f"|format(metrics.escalation_rate) }}%</div>
-                </div>
-                <i class="fas fa-exclamation-triangle metric-icon" style="color: #ffc107;"></i>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="metric-card" style="border-left-color: #17a2b8;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="metric-label">Temps de réponse</div>
-                    <div class="metric-value" style="color: #17a2b8;">{{ "%.0f"|format(metrics.avg_response_time * 1000) }}ms</div>
-                </div>
-                <i class="fas fa-clock metric-icon" style="color: #17a2b8;"></i>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Statistiques secondaires -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                <h3>{{ metrics.active_users }}</h3>
-                <p class="text-muted mb-0">Utilisateurs actifs (24h)</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <i class="fas fa-comments fa-2x text-success mb-2"></i>
-                <h3>{{ metrics.total_conversations }}</h3>
-                <p class="text-muted mb-0">Conversations totales</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <i class="fas fa-smile fa-2x text-info mb-2"></i>
-                <h3>{{ "%.1f"|format(metrics.user_satisfaction) }}%</h3>
-                <p class="text-muted mb-0">Satisfaction utilisateur</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Onglets -->
-<ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="conversations-tab" data-bs-toggle="tab" data-bs-target="#conversations" type="button">
-            <i class="fas fa-comments me-2"></i>
-            Conversations récentes
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button">
-            <i class="fas fa-chart-bar me-2"></i>
-            Statistiques détaillées
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="feedback-tab" data-bs-toggle="tab" data-bs-target="#feedback" type="button">
-            <i class="fas fa-star me-2"></i>
-            Feedback utilisateurs
-        </button>
-    </li>
-</ul>
-
-<div class="tab-content" id="dashboardTabsContent">
-    <!-- Onglet Conversations -->
-    <div class="tab-pane fade show active" id="conversations" role="tabpanel">
-        <div class="row">
-            <div class="col-12">
-                <h4 class="mb-3">
-                    <i class="fas fa-history me-2"></i>
-                    10 dernières conversations
-                </h4>
-                
-                <div id="conversationsList">
-                    {% for conv in conversations %}
-                    <div class="conversation-item">
-                        <div class="conversation-question">
-                            <i class="fas fa-user me-2"></i>
-                            {{ conv.question }}
-                        </div>
-                        <div class="conversation-response">
-                            <i class="fas fa-robot me-2"></i>
-                            {{ conv.reponse[:200] }}{% if conv.reponse|length > 200 %}...{% endif %}
-                        </div>
-                        <div class="conversation-meta">
-                            <span>
-                                <i class="fas fa-user-tag me-1"></i>
-                                {{ conv.profil }}
-                            </span>
-                            <span>
-                                <i class="fas fa-percentage me-1"></i>
-                                {{ "%.1f"|format(conv.similarite * 100) }}% pertinence
-                            </span>
-                            <span>
-                                <i class="fas fa-clock me-1"></i>
-                                {{ conv.timestamp }}
-                            </span>
-                            {% if conv.feedback %}
-                            <span class="stat-badge {{ 'success' if conv.feedback == 'positive' else 'danger' }}">
-                                <i class="fas fa-thumbs-{{ 'up' if conv.feedback == 'positive' else 'down' }} me-1"></i>
-                                {{ conv.feedback }}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Onglet Statistiques -->
-    <div class="tab-pane fade" id="stats" role="tabpanel">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-chart-pie me-2"></i>
-                        Distribution par profil
-                    </div>
-                    <div class="card-body">
-                        <canvas id="profilChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-chart-bar me-2"></i>
-                        Distribution de similarité
-                    </div>
-                    <div class="card-body">
-                        <canvas id="similarityChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-clock me-2"></i>
-                        Activité par heure
-                    </div>
-                    <div class="card-body">
-                        <canvas id="hourlyChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Onglet Feedback -->
-    <div class="tab-pane fade" id="feedback" role="tabpanel">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <i class="fas fa-thumbs-up fa-3x text-success mb-3"></i>
-                        <h2>{{ stats.feedback_distribution.positive }}</h2>
-                        <p class="text-muted">Feedbacks positifs</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <i class="fas fa-thumbs-down fa-3x text-danger mb-3"></i>
-                        <h2>{{ stats.feedback_distribution.negative }}</h2>
-                        <p class="text-muted">Feedbacks négatifs</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <i class="fas fa-question-circle fa-3x text-warning mb-3"></i>
-                        <h2>{{ stats.feedback_distribution.none }}</h2>
-                        <p class="text-muted">Sans feedback</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-<script>
-// Données des statistiques
-const stats = {{ stats|tojson }};
-
-// Graphique par profil
-const profilCtx = document.getElementById('profilChart').getContext('2d');
-new Chart(profilCtx, {
-    type: 'pie',
-    data: {
-        labels: Object.keys(stats.by_profil),
-        datasets: [{
-            data: Object.values(stats.by_profil),
-            backgroundColor: [
-                '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'
-            ]
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            }
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Assistant RH Safran</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    // Rafraîchissement automatique des métriques, stats et feedbacks
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateDashboard() {
+            fetch('/dashboard?ajax=1')
+                .then(r => r.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContent = doc.querySelector('.dashboard-content');
+                    if (newContent) {
+                        document.querySelector('.dashboard-content').innerHTML = newContent.innerHTML;
+                        renderCharts();
+                    }
+                });
         }
-    }
-});
-
-// Graphique de similarité
-const similarityCtx = document.getElementById('similarityChart').getContext('2d');
-new Chart(similarityCtx, {
-    type: 'bar',
-    data: {
-        labels: ['Élevée (≥70%)', 'Moyenne (40-70%)', 'Faible (<40%)'],
-        datasets: [{
-            label: 'Nombre de conversations',
-            data: [
-                stats.similarity_distribution.high,
-                stats.similarity_distribution.medium,
-                stats.similarity_distribution.low
-            ],
-            backgroundColor: ['#28a745', '#ffc107', '#dc3545']
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-// Graphique horaire
-if (Object.keys(stats.by_hour).length > 0) {
-    const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
-    const hours = Array.from({length: 24}, (_, i) => i);
-    const hourlyData = hours.map(h => stats.by_hour[h] || 0);
-    
-    new Chart(hourlyCtx, {
-        type: 'line',
-        data: {
-            labels: hours.map(h => `${h}h`),
-            datasets: [{
-                label: 'Conversations',
-                data: hourlyData,
-                borderColor: '#1f77b4',
-                backgroundColor: 'rgba(31, 119, 180, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
+        setInterval(updateDashboard, 5000);
+        renderCharts();
     });
-}
 
-// Actualiser les données
-document.getElementById('refreshData').addEventListener('click', () => {
-    location.reload();
-});
-</script>
-{% endblock %}
+    function renderCharts() {
+        // Conversations par profil
+        const profilLabels = Array.from(document.querySelectorAll('[data-profil-label]')).map(e => e.textContent);
+        const profilData = Array.from(document.querySelectorAll('[data-profil-value]')).map(e => parseInt(e.textContent));
+        if (document.getElementById('chart-profil')) {
+            new Chart(document.getElementById('chart-profil').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: profilLabels,
+                    datasets: [{
+                        data: profilData,
+                        backgroundColor: ['#0066CC', '#00B8D9', '#36B37E', '#FFAB00', '#FF5630']
+                    }]
+                },
+                options: {responsive: true, plugins: {legend: {position: 'bottom'}}}
+            });
+        }
+        // Distribution feedback
+        const fbLabels = Array.from(document.querySelectorAll('[data-fb-label]')).map(e => e.textContent);
+        const fbData = Array.from(document.querySelectorAll('[data-fb-value]')).map(e => parseInt(e.textContent));
+        if (document.getElementById('chart-feedback')) {
+            new Chart(document.getElementById('chart-feedback').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: fbLabels,
+                    datasets: [{
+                        data: fbData,
+                        backgroundColor: ['#0066CC', '#8b5a3c', '#cbd5e1']
+                    }]
+                },
+                options: {responsive: true, plugins: {legend: {position: 'bottom'}}}
+            });
+        }
+    }
+    </script>
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: auto;
+            background: #fafbfc;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 400px;
+            background: linear-gradient(135deg, #0066CC 0%, #0088FF 100%);
+            opacity: 0.03;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 102, 204, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(0, 102, 204, 0.08);
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 0 rgba(0, 102, 204, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .chat-avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #152238 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(30, 58, 95, 0.25);
+            font-family: 'Sora', sans-serif;
+        }
+
+        .chat-info h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin-bottom: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .safran-logo {
+            height: 36px;
+            width: auto;
+            display: block;
+        }
+
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-badge {
+            background: rgba(0, 102, 204, 0.1);
+            color: #0066CC;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #1e3a5f 0%, #152238 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(30, 58, 95, 0.2);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 58, 95, 0.3);
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .dashboard-header {
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Sora', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-header p {
+            font-size: 14.5px;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 102, 204, 0.06);
+            border: 1px solid rgba(0, 102, 204, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.12);
+            border-color: rgba(0, 102, 204, 0.12);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .kpi-title {
+            font-size: 12.5px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-icon {
+            font-size: 28px;
+            opacity: 0.8;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .kpi-change {
+            font-size: 12.5px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .kpi-change.positive {
+            color: #0066CC;
+        }
+
+        .kpi-change.warning {
+            color: #8b5a3c;
+        }
+
+        .kpi-change.danger {
+            color: #94a3b8;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 102, 204, 0.06);
+            border: 1px solid rgba(0, 102, 204, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.12);
+        }
+
+        .chart-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 20px;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .chart-placeholder {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.05) 0%, rgba(0, 102, 204, 0.03) 100%);
+            border: 2px dashed rgba(0, 102, 204, 0.2);
+            border-radius: 12px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Stats Items */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.05) 0%, rgba(0, 102, 204, 0.03) 100%);
+            border-left: 3px solid #0066CC;
+            padding: 14px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.08) 0%, rgba(0, 102, 204, 0.05) 100%);
+            border-left-color: #0088FF;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0066CC;
+            font-family: 'Sora', sans-serif;
+        }
+
+        /* Table Section */
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 102, 204, 0.06);
+            border: 1px solid rgba(0, 102, 204, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 20px;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: rgba(0, 102, 204, 0.04);
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 102, 204, 0.08);
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(0, 102, 204, 0.06);
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .table tr:hover {
+            background: rgba(0, 102, 204, 0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: rgba(0, 102, 204, 0.1);
+            color: #0066CC;
+        }
+
+        .status-badge.warning {
+            background: rgba(139, 90, 60, 0.1);
+            color: #8b5a3c;
+        }
+
+        .status-badge.danger {
+            background: rgba(148, 163, 184, 0.1);
+            color: #64748b;
+        }
+
+        /* Scrollbar */
+        .dashboard-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .dashboard-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .dashboard-content::-webkit-scrollbar-thumb {
+            background: rgba(0, 102, 204, 0.3);
+            border-radius: 10px;
+        }
+
+        .dashboard-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 102, 204, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-content {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .dashboard-content {
+                padding: 24px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <div class="chat-avatar">RH</div>
+                <div class="chat-info">
+                    <h2>Dashboard Analytics</h2>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="logo-section">
+                    <img src="/static/img/safran_logo.png" alt="Safran Logo" class="safran-logo" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+
+        <div class="dashboard-content">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1>Vue d'ensemble des performances</h1>
+                <p>Analyse complète des performances de l'assistant RH Safran</p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Taux de Compréhension</div>
+                    </div>
+                    <div class="kpi-value">{{ metrics.intent_accuracy }}%</div>
+                    <div class="kpi-change positive">Excellent</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Taux de Validation</div>
+                    </div>
+                    <div class="kpi-value">{{ metrics.validation_rate }}%</div>
+                    <div class="kpi-change positive">En hausse</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Taux d'Escalade</div>
+                    </div>
+                    <div class="kpi-value">{{ metrics.escalation_rate }}%</div>
+                    <div class="kpi-change warning">Optimal</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Temps de Réponse</div>
+                    </div>
+                    <div class="kpi-value">{{ metrics.avg_response_time }}s</div>
+                    <div class="kpi-change positive">Rapide</div>
+                </div>
+            </div>
+
+            <!-- Secondary KPIs -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Utilisateurs Actifs</div>
+                    </div>
+                    <div class="kpi-value">{{ metrics.active_users }}</div>
+                    <div class="kpi-change">Dernières 24h</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Conversations</div>
+                    </div>
+                    <div class="kpi-value">{{ metrics.total_conversations }}</div>
+                    <div class="kpi-change">Depuis le lancement</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Satisfaction Utilisateur</div>
+                    </div>
+                    <div class="kpi-value">{{ metrics.user_satisfaction }}/5</div>
+                    <div class="kpi-change positive">Excellent</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Réponses Correctes</div>
+                    </div>
+                    <div class="kpi-value">{{ metrics.correct_answers }}</div>
+                    <div class="kpi-change positive">Sur {{ metrics.total_questions }}</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-title">Conversations par Profil</div>
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <canvas id="chart-profil" width="320" height="180" style="max-width:320px;max-height:180px;"></canvas>
+                    </div>
+                    <div class="stats-grid">
+                        {% for profil, count in stats.by_profil.items() %}
+                        <div class="stat-item">
+                            <div class="stat-label" data-profil-label>{{ profil }}</div>
+                            <div class="stat-value" data-profil-value>{{ count }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Distribution des Retours</div>
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <canvas id="chart-feedback" width="320" height="180" style="max-width:320px;max-height:180px;"></canvas>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label" data-fb-label>Positifs</div>
+                            <div class="stat-value" style="color: #0066CC;" data-fb-value>{{ stats.feedback_distribution.positive }}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label" data-fb-label>Négatifs</div>
+                            <div class="stat-value" style="color: #64748b;" data-fb-value>{{ stats.feedback_distribution.negative }}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label" data-fb-label>Aucun</div>
+                            <div class="stat-value" style="color: #cbd5e1;" data-fb-value>{{ stats.feedback_distribution.none }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Table -->
+            <div class="table-card">
+                <div class="table-title">Performance par Profil</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Profil</th>
+                            <th>Conversations</th>
+                            <th>Temps Moyen</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for profil, avg_time in stats.avg_response_time_by_profil.items() %}
+                        <tr>
+                            <td><strong>{{ profil }}</strong></td>
+                            <td>{{ stats.by_profil.get(profil, 0) }}</td>
+                            <td>{{ avg_time }}s</td>
+                            <td>
+                                {% if avg_time < 2 %}
+                                    <span class="status-badge success">Excellent</span>
+                                {% elif avg_time < 3 %}
+                                    <span class="status-badge warning">Bon</span>
+                                {% else %}
+                                    <span class="status-badge danger">À améliorer</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Similarity Distribution -->
+            <div class="table-card">
+                <div class="table-title">Distribution de Similarité</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Haute Similarité</div>
+                        <div class="stat-value" style="color: #0066CC;">{{ stats.similarity_distribution.high }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Moyenne Similarité</div>
+                        <div class="stat-value" style="color: #8b5a3c;">{{ stats.similarity_distribution.medium }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Basse Similarité</div>
+                        <div class="stat-value" style="color: #94a3b8;">{{ stats.similarity_distribution.low }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedbacks Employés -->
+            <div class="table-card">
+                <div class="table-title">Feedbacks des Employés sur le Chatbot</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Utilisateur</th>
+                            <th>Type</th>
+                            <th>Commentaire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fb in feedbacks %}
+                        <tr>
+                            <td>{{ fb.timestamp[:16]|replace('T', ' ') }}</td>
+                            <td>{{ fb.username }}</td>
+                            <td>
+                                {% if fb.type == 'positive' %}
+                                    <span style="color: #0066CC; font-weight: 600;">Satisfait</span>
+                                {% elif fb.type == 'negative' %}
+                                    <span style="color: #8b5a3c; font-weight: 600;">Insatisfait</span>
+                                {% else %}
+                                    <span>{{ fb.type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ fb.comment }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" style="color: #64748b; text-align: center;">Aucun feedback pour l'instant.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Logout button at the end of dashboard -->
+            <div style="display: flex; justify-content: flex-start; margin-top: 32px;">
+                <a href="/logout" class="quick-action-btn" title="Déconnexion" style="padding:7px 12px; font-size:16px; background: #e3f0fc; color: #0f172a; font-weight: 500; border-radius: 8px; border: 1px solid #e0e7ef; display: inline-flex; align-items: center; width: auto;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"><path fill="#0f172a" d="M16.59 7.41a1 1 0 0 0-1.41 1.41L16.17 10H9a1 1 0 1 0 0 2h7.17l-1.59 1.59a1 1 0 1 0 1.41 1.41l3.3-3.3a1 1 0 0 0 0-1.41l-3.3-3.3ZM5 5a2 2 0 0 1 2-2h5a1 1 0 1 1 0 2H7v14h5a1 1 0 1 1 0 2H7a2 2 0 0 1-2-2V5Z"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

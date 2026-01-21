@@ -65,9 +65,9 @@ PIPELINE_ENABLED = True
 # 🧪 DRY RUN - Tout sauf indexation FAISS
 DRY_RUN = False
 
-# Paths
-CURRENT_DIR = Path(__file__).parent
-PROJECT_ROOT = CURRENT_DIR.parent
+# Paths - Correction pour conteneur Airflow
+CURRENT_DIR = Path("/opt/airflow/dags")
+PROJECT_ROOT = Path("/opt/airflow")
 
 DATASET_FOLDER = PROJECT_ROOT / 'dataset'
 PARSED_FOLDER = CURRENT_DIR / 'parsed'
@@ -78,8 +78,7 @@ LOGS_FOLDER = CURRENT_DIR / 'logs_pipeline'
 TEMP_FOLDER = CURRENT_DIR / 'temp'
 
 # Vectorstore
-VECTORSTORE_BASE = PROJECT_ROOT / 'backend' / \
-    'rag_service' / 'vectorstores_faiss'
+VECTORSTORE_BASE = PROJECT_ROOT / 'backend' / 'rag_service' / 'vectorstores_faiss'
 
 # Profils utilisateurs
 USER_PROFILES = ['Apprenti', 'Cadre', 'Technicien', 'Manager', 'RH', 'Autre']
@@ -1089,6 +1088,40 @@ with DAG(
     max_active_runs=1,
 ) as dag:
 
+    from airflow.sensors.python import PythonSensor
+    import time
+
+    def new_file_in_dataset(**context):
+        """Return True if a new file has been added to the dataset folder since the last run."""
+        marker_path = CURRENT_DIR / '.last_dataset_check'
+        last_check = 0
+        if marker_path.exists():
+            with open(marker_path, 'r') as f:
+                try:
+                    last_check = float(f.read().strip())
+                except Exception:
+                    last_check = 0
+        new_files = []
+        for file in DATASET_FOLDER.glob('*'):
+            if file.is_file() and file.stat().st_mtime > last_check:
+                new_files.append(file)
+        if new_files:
+            # Update marker for next run
+            with open(marker_path, 'w') as f:
+                f.write(str(time.time()))
+            return True
+        return False
+
+    file_sensor = PythonSensor(
+        task_id='wait_for_new_file',
+        python_callable=new_file_in_dataset,
+        poke_interval=60,  # check every minute
+        timeout=60*60*24,  # 24 hours
+        mode='poke',
+        soft_fail=True,
+        dag=dag
+    )
+
     start = EmptyOperator(task_id='start')
 
     # 🔥 KILL SWITCH
@@ -1201,4 +1234,4 @@ with DAG(
     end = EmptyOperator(task_id='end')
 
     # 🔀 PIPELINE FLOW
-    start >> check_enabled >> validation >> parsing >> anonymization >> chunking >> indexing >> index_global >> report >> end
+    file_sensor >> start >> check_enabled >> validation >> parsing >> anonymization >> chunking >> indexing >> index_global >> report >> end

@@ -17,6 +17,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -28,6 +29,7 @@
         opacity: 0;
         transform: translateX(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -35,9 +37,12 @@
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.5;
     }
@@ -59,7 +64,7 @@
 
 .card-hover:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* Boutons personnalisés */
@@ -73,7 +78,7 @@
 .btn-gradient-primary:hover {
     background: linear-gradient(135deg, #1565c0, #0d47a1);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(31, 119, 180, 0.4);
+    box-shadow: 0 4px 12px #1f77b466;
 }
 
 .btn-gradient-success {
@@ -95,7 +100,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -130,13 +135,13 @@
 
 .table-custom tbody tr {
     background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: all var(--transition-speed);
 }
 
 .table-custom tbody tr:hover {
     transform: translateX(5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Badges personnalisés */
@@ -163,7 +168,7 @@
     background: var(--primary-color);
     color: white;
     border: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     opacity: 0;
     transition: opacity var(--transition-speed);
@@ -184,11 +189,11 @@
     .metric-value {
         font-size: 1.8rem;
     }
-    
+
     .chat-container {
         height: 60vh;
     }
-    
+
     .message-content {
         max-width: 85%;
     }
@@ -200,12 +205,12 @@
         background-color: #1a1a1a;
         color: #e0e0e0;
     }
-    
+
     .card {
         background: #2a2a2a;
         color: #e0e0e0;
     }
-    
+
     .card-header {
         background: #333;
     }
@@ -213,10 +218,14 @@
 
 /* Print styles */
 @media print {
-    .navbar, .footer, .btn, .scroll-to-top {
+
+    .navbar,
+    .footer,
+    .btn,
+    .scroll-to-top {
         display: none;
     }
-    
+
     .card {
         break-inside: avoid;
         box-shadow: none;

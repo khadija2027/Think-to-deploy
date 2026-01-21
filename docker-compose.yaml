@@ -19,7 +19,7 @@ services:
       - ./ad-docker-fastapi/scripts:/scripts
       - ./ad-docker-fastapi/ldif_files:/container/service/slapd/assets/config/bootstrap/ldif/custom
     ports:
-      - "389:389"  # ← AJOUTER le port 389 pour phpLDAPadmin
+      - "389:389"  # 
       - "636:636"
     networks:
       - t2d-network
@@ -78,7 +78,7 @@ services:
       - "8000:8000"
     environment:
       # LDAP Configuration - CORRIGÉ
-      - LDAP_SERVER=t2d-openldap  # ← CORRIGER le nom du container
+      - LDAP_SERVER=172.18.0.3  # ← Utiliser l'adresse IP du conteneur LDAP
       - LDAP_PORT=389
       - LDAP_USE_TLS=false
       - LDAP_BASE_DN=dc=example,dc=com
@@ -183,6 +183,29 @@ services:
       - t2d-network
     restart: always
     command: scheduler
+
+  # ========================================
+  # SERVICE CHATBOT (application RH complète)
+  # ========================================
+  chatbot:
+    image: python:3.9
+    container_name: t2d-chatbot
+    ports:
+      - "8001:8000"  # Port 8001 pour l'application chatbot
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - JWT_SECRET_KEY=ma-cle-secrete-pour-developpement-changez-moi
+      - JWT_ALGORITHM=HS256
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+    volumes:
+      - ./T2D_Chatbot_for_HR:/app
+    working_dir: /app
+    depends_on:
+      - openldap
+    networks:
+      - t2d-network
+    restart: unless-stopped
+    command: sh -c "apt-get update && apt-get install -y build-essential libabsl-dev pybind11-dev libre2-dev && pip install -r requirements.txt && python frontend_chatbot/app.py"
 
 volumes:
   postgres-data:

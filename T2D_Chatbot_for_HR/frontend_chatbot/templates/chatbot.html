@@ -56,7 +56,7 @@
         /* Sidebar */
         .sidebar {
             width: 340px;
-            background: linear-gradient(180deg, #1e3a5f 0%, #152238 100%);
+            background: #0f172a;
             color: white;
             display: flex;
             flex-direction: column;
@@ -418,7 +418,8 @@
         }
 
         .message.user .message-content {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            background: linear-gradient(135deg, #e3f0fc 0%, #fafdff 100%);
+            color: #0f172a;
             color: #1e3a5f;
             box-shadow: 0 2px 12px rgba(0, 102, 204, 0.12);
             border: 1px solid rgba(0, 102, 204, 0.1);
@@ -758,17 +759,67 @@
                         </svg>
                     </button>
                 </div>
-                <div class="quick-actions">
-                    <p class="quick-actions-title">Actions rapides</p>
-                    <button class="quick-action-btn">Poser des congés</button>
-                    <button class="quick-action-btn">Fiche de paie</button>
-                    <button class="quick-action-btn">Formations</button>
-                    <button class="quick-action-btn">Avantages</button>
-                    <button class="quick-action-btn">Mobilité interne</button>
-                    <button class="quick-action-btn">Onboarding</button>
+                <div class="quick-actions" style="font-family: 'Inter', 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;">
+                    <p class="quick-actions-title">Feedback sur le chatbot</p>
+                    <form id="feedback-form" style="display: flex; flex-direction: column; gap: 12px; font-family: inherit;">
+                        <div style="display: flex; gap: 8px; font-family: inherit;">
+                            <button type="button" class="quick-action-btn" id="feedback-positive" title="Satisfaction" style="font-family: inherit; text-align: center; justify-content: center;" disabled>Satisfaction</button>
+                            <button type="button" class="quick-action-btn" id="feedback-negative" title="Insatisfaction" style="font-family: inherit; text-align: center; justify-content: center;" disabled>Insatisfaction</button>
+                        </div>
+                        <textarea id="feedback-comment" rows="3" placeholder="Votre commentaire (optionnel)" style="resize: none; border-radius: 8px; border: 1px solid #e0e7ef; padding: 8px; font-size: 14px; font-family: inherit;" disabled></textarea>
+                        <button type="submit" class="quick-action-btn" style="background: linear-gradient(135deg, #e3f0fc 0%, #fafdff 100%); color: #0f172a; font-weight: 600; font-family: inherit; text-align: center; justify-content: center; border: 1px solid #e0e7ef;" disabled>Envoyer</button>
+                        <div id="feedback-message" style="font-size: 13px; color: #fff; min-height: 18px; font-family: inherit;"></div>
+                    </form>
                 </div>
+                            <script>
+                            // Feedback form logic
+                            document.addEventListener('DOMContentLoaded', function() {
+                                let feedbackType = null;
+                                const positiveBtn = document.getElementById('feedback-positive');
+                                const negativeBtn = document.getElementById('feedback-negative');
+                                const feedbackForm = document.getElementById('feedback-form');
+                                const feedbackMsg = document.getElementById('feedback-message');
+                                [positiveBtn, negativeBtn].forEach(btn => {
+                                    btn.addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        feedbackType = (btn === positiveBtn) ? 'positive' : 'negative';
+                                        positiveBtn.style.background = feedbackType === 'positive' ? 'rgba(0,102,204,0.7)' : '';
+                                        negativeBtn.style.background = feedbackType === 'negative' ? 'rgba(139,90,60,0.7)' : '';
+                                    });
+                                });
+                                feedbackForm.addEventListener('submit', function(e) {
+                                    e.preventDefault();
+                                    const comment = document.getElementById('feedback-comment').value.trim();
+                                    if (!feedbackType) {
+                                        feedbackMsg.textContent = 'Merci de sélectionner un type de feedback.';
+                                        return;
+                                    }
+                                    fetch('/api/feedback', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ type: feedbackType, comment: comment })
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        feedbackMsg.textContent = data.message || 'Merci pour votre retour !';
+                                        feedbackForm.reset();
+                                        feedbackType = null;
+                                        positiveBtn.style.background = '';
+                                        negativeBtn.style.background = '';
+                                    })
+                                    .catch(() => {
+                                        feedbackMsg.textContent = 'Erreur lors de l\'envoi du feedback.';
+                                    });
+                                });
+                            });
+                            </script>
                 <div class="sidebar-footer">
-                    <p>Besoin d'aide supplémentaire ? Contactez le service RH au +33 1 40 60 80 80</p>
+                    <p style="margin-bottom:18px;">Besoin d'aide supplémentaire ? Contactez le service RH au +33 1 40 60 80 80</p>
+                    <div style="width:100%;display:flex;justify-content:flex-start;">
+                        <a href="/logout" class="quick-action-btn" title="Déconnexion" style="margin-bottom:10px; padding:7px 12px; font-size:16px; background: #e3f0fc; color: #0f172a; font-weight: 500; border-radius: 8px; border: 1px solid #e0e7ef; display: inline-flex; align-items: center; width: auto;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"><path fill="#0f172a" d="M16.59 7.41a1 1 0 0 0-1.41 1.41L16.17 10H9a1 1 0 1 0 0 2h7.17l-1.59 1.59a1 1 0 1 0 1.41 1.41l3.3-3.3a1 1 0 0 0 0-1.41l-3.3-3.3ZM5 5a2 2 0 0 1 2-2h5a1 1 0 1 1 0 2H7v14h5a1 1 0 1 1 0 2H7a2 2 0 0 1-2-2V5Z"/></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
             <!-- Main Chat Area -->
@@ -831,6 +882,12 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        function enableFeedbackForm() {
+            document.getElementById('feedback-positive').disabled = false;
+            document.getElementById('feedback-negative').disabled = false;
+            document.getElementById('feedback-comment').disabled = false;
+            document.querySelector('#feedback-form button[type="submit"]').disabled = false;
+        }
         async function sendMessage() {
             const question = input.value.trim();
             if (!question) return;
@@ -852,9 +909,11 @@
                 } else {
                     appendMessage('assistant', data.error || 'Erreur inconnue');
                 }
+                enableFeedbackForm();
             } catch (e) {
                 messagesContainer.removeChild(messagesContainer.lastChild);
                 appendMessage('assistant', 'Erreur de connexion au serveur.');
+                enableFeedbackForm();
             }
             sendBtn.disabled = false;
         }
