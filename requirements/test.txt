@@ -1,0 +1,5 @@
+# Lightweight regression environment: deterministic embeddings, real FAISS.
+-r base.txt
+-r web.txt
+packaging==24.2
+httpx==0.28.1

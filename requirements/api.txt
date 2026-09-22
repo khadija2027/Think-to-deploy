@@ -1,0 +1,3 @@
+-r models.txt
+-r web.txt
+uvicorn[standard]==0.34.0

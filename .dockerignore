@@ -1,0 +1,12 @@
+.git
+.env
+.env.*
+**/__pycache__
+**/.venv
+**/venv
+ad-docker-fastapi
+T2D_Chatbot_for_HR/dataset
+T2D_Chatbot_for_HR/logs
+T2D_Chatbot_for_HR/dags/*.pkl
+T2D_Chatbot_for_HR/dags/*.index
+T2D_Chatbot_for_HR/backend

@@ -782,7 +782,7 @@
                                 <h2 style="display: inline-block; vertical-align: middle;">Assistant RH Safran</h2>
                                 <div class="chat-status">
                                     <span class="status-dot"></span>
-                                    <span>En ligne</span>
+                    <span id="rag-status">Vérification des documents...</span>
                                 </div>
                             </div>
                         </div>
@@ -823,21 +823,23 @@
             msgDiv.innerHTML = `
                 <div class="message-avatar">${role === 'user' ? 'Vous' : 'S'}</div>
                 <div class="message-content">
-                    <div class="message-text">${text}</div>
+                    <div class="message-text" style="white-space: pre-wrap"></div>
                     <span class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
             `;
+            msgDiv.querySelector('.message-text').textContent = text;
             messagesContainer.appendChild(msgDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return msgDiv;
         }
 
         async function sendMessage() {
             const question = input.value.trim();
-            if (!question) return;
+            if (!question || sendBtn.disabled) return;
             appendMessage('user', question);
             input.value = '';
             sendBtn.disabled = true;
-            appendMessage('assistant', '<em>...</em>');
+            const loadingMessage = appendMessage('assistant', 'Recherche en cours...');
             try {
                 const response = await fetch('/api/ask', {
                     method: 'POST',
@@ -846,20 +848,47 @@
                 });
                 const data = await response.json();
                 // Remove the loading message
-                messagesContainer.removeChild(messagesContainer.lastChild);
+                loadingMessage.remove();
                 if (data.answer) {
                     appendMessage('assistant', data.answer);
+                    if (data.sources && data.sources.length) {
+                        const sources = [...new Set(data.sources.map(source => source.document))];
+                        appendMessage('assistant', 'Documents consultés : ' + sources.join(', '));
+                    }
                 } else {
-                    appendMessage('assistant', data.error || 'Erreur inconnue');
+                    const detail = typeof data.detail === 'string' ? data.detail : 'Question invalide.';
+                    appendMessage('assistant', data.error || detail);
                 }
             } catch (e) {
-                messagesContainer.removeChild(messagesContainer.lastChild);
+                loadingMessage.remove();
                 appendMessage('assistant', 'Erreur de connexion au serveur.');
             }
             sendBtn.disabled = false;
         }
 
         sendBtn.addEventListener('click', sendMessage);
+        document.querySelectorAll('.quick-action-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                if (!sendBtn.disabled) {
+                    input.value = button.textContent.trim();
+                    sendMessage();
+                }
+            });
+        });
+        async function refreshStatus() {
+            const label = document.getElementById('rag-status');
+            try {
+                const response = await fetch('/api/status');
+                const status = await response.json();
+                label.textContent = status.ready
+                    ? 'Documents disponibles'
+                    : 'En attente de documents';
+            } catch {
+                label.textContent = 'Service indisponible';
+            }
+        }
+        refreshStatus();
+        setInterval(refreshStatus, 30000);
         input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sendMessage();
         });

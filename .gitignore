@@ -7,7 +7,7 @@
 
 # Docker
 *.log
-.dockerignore
+!.dockerignore
 
 # Volumes Docker
 ad-docker-fastapi/ldap_data/
@@ -77,5 +77,8 @@ T2D_Chatbot_for_HR/cache/
 T2D_Chatbot_for_HR/output/
 T2D_Chatbot_for_HR/backend/
 
-# Logs FastAPI
-fastapi-app/app.log
+# Shared RAG runtime artifacts
+T2D_Chatbot_for_HR/rag_index/
+T2D_Chatbot_for_HR/pipeline_work/
+.venv/
+.test-runtime/
