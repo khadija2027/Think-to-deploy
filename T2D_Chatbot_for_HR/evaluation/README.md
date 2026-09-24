@@ -29,6 +29,10 @@ The Compose configuration reads `GROQ_API_KEY` and `GROQ_MODEL` from the ignored
 `evaluation/.env.groq` file. The selected judge is `openai/gpt-oss-120b`, hosted
 by Groq at `https://api.groq.com/openai/v1`. Never place keys in the dataset.
 Provider account rate limits and pricing apply.
+The runner spaces judge requests by 20 seconds, retries transient failures, and
+uses separate requests for Ragas's multiple relevancy samples because Groq accepts
+only one completion per request. A full evaluation can take several hours.
+Collection-only resumes ignore judge settings because collection makes no judge calls.
 
 To score the existing baseline collection while it continues running:
 
@@ -45,6 +49,22 @@ For a small independent smoke test:
 ```powershell
 docker compose -f ../docker-compose.yaml -f evaluation/compose.yaml run --no-deps rag-evaluation --limit 2 --output /evaluation/results/smoke
 ```
+
+For the 90-question dataset, run nine batches of ten using the same judge and
+the existing output directory. After quota is available, run:
+
+```powershell
+docker compose -f ../docker-compose.yaml -f evaluation/compose.yaml run --rm --no-deps rag-evaluation --answers-from /evaluation/results/baseline --output /evaluation/results/groq --next-batch
+```
+
+Each invocation runs only the first unfinished batch and then exits. Repeat after
+checking quota; do not launch nine jobs in parallel. Use `--batch 1` through
+`--batch 9` instead of `--next-batch` to select a specific batch. Existing successful
+metrics (including zero scores) are reused. `scores.csv` and `summary.json` retain
+the full-dataset report; `batches.json` lists membership and scored counts.
+An exhausted rate limit stops scoring after SDK retries, preserving checkpoints.
+Batching does not increase quota. Judge model, prompts and generation settings
+are unchanged.
 
 Groq outputs in `results/groq/` (original collection remains in `results/baseline/`):
 

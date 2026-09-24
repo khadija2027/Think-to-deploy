@@ -15,6 +15,22 @@ import requests
 from rag_core.storage import read_json, write_json, snapshot_directory
 
 
+ANSWER_METRICS = {"context_precision", "context_recall", "faithfulness",
+                  "response_relevancy", "factual_correctness"}
+
+
+def scored(record):
+    required = {"appropriate_abstention"} if record["category"] == "unanswerable" else ANSWER_METRICS
+    return required <= record.get("metrics", {}).keys()
+
+
+def select_batch(rows, batch, size=10):
+    count = math.ceil(len(rows) / size)
+    if not 1 <= batch <= count:
+        raise ValueError(f"Batch must be between 1 and {count}")
+    return rows[(batch - 1) * size:batch * size]
+
+
 def load_dataset(path):
     rows = json.loads(path.read_text(encoding="utf-8-sig"))
     if not isinstance(rows, list) or not rows:
@@ -63,6 +79,7 @@ def collect(row, api, root, version):
 
 def build_metrics(model, embedding_model):
     from langchain_openai import ChatOpenAI
+    from langchain_core.rate_limiters import InMemoryRateLimiter
     from ragas.llms import LangchainLLMWrapper
     from ragas.embeddings import BaseRagasEmbeddings
     from ragas.metrics import (Faithfulness, LLMContextPrecisionWithReference,
@@ -89,10 +106,14 @@ def build_metrics(model, embedding_model):
 
     client = ChatOpenAI(model=model, api_key=os.environ["GROQ_API_KEY"],
                         base_url="https://api.groq.com/openai/v1", temperature=0,
-                        max_tokens=4096, timeout=120, max_retries=1)
+                        max_tokens=4096, timeout=120, max_retries=5,
+                        rate_limiter=InMemoryRateLimiter(requests_per_second=1 / 20,
+                                                       max_bucket_size=1))
     # Fail before collecting 90 expensive answers if the key/model is unusable.
     client.invoke("Reply with OK.")
-    judge = LangchainLLMWrapper(client, run_config=RunConfig(timeout=180, max_retries=1))
+    # Groq supports only n=1 per request; Ragas relevancy requests three samples.
+    judge = LangchainLLMWrapper(client, run_config=RunConfig(timeout=600, max_retries=1),
+                               bypass_n=True)
     return {
         "context_precision": LLMContextPrecisionWithReference(llm=judge),
         "context_recall": LLMContextRecall(llm=judge),
@@ -118,7 +139,7 @@ async def score(record, metrics, checkpoint):
             record["metric_skips"][name] = "Not applicable to this question category"
             continue
         try:
-            value = float(await metric.single_turn_ascore(sample, timeout=300))
+            value = float(await metric.single_turn_ascore(sample, timeout=900))
             if not math.isfinite(value):
                 raise ValueError("Metric returned a non-finite score")
             record["metrics"][name] = value
@@ -127,6 +148,9 @@ async def score(record, metrics, checkpoint):
         except Exception as exc:
             record["metric_errors"][name] = type(exc).__name__
             print(f"  {record['id']} {name}: {type(exc).__name__}", flush=True)
+            if type(exc).__name__ == "RateLimitError":
+                write_json(checkpoint, record)
+                raise
         write_json(checkpoint, record)
 
 
@@ -159,6 +183,12 @@ def report(output, rows, metadata):
         "generation_error" in r or len(r["metrics"]) + len(r["metric_skips"]) + len(r["metric_errors"]) == len(names)
         for r in records)
     write_json(output / "summary.json", summary)
+    by_id = {r["id"]: r for r in records}
+    write_json(output / "batches.json", [
+        {"batch": n, "ids": [r["id"] for r in batch], "total": len(batch),
+         "scored": sum(scored(by_id[r["id"]]) for r in batch if r["id"] in by_id)}
+        for n in range(1, math.ceil(len(rows) / 10) + 1)
+        for batch in [select_batch(rows, n)]])
     with (output / "scores.csv").open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=["id", "category", "latency_seconds", "generation_error"] + names)
         writer.writeheader()
@@ -178,9 +208,15 @@ async def main():
     parser.add_argument("--dataset", type=Path, default=Path("/evaluation/test_dataset.json"))
     parser.add_argument("--output", type=Path, default=Path("/evaluation/results/baseline"))
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--batch", type=int, help="Run one numbered batch of 10, preserving the full report")
+    parser.add_argument("--next-batch", action="store_true", help="Run only the first batch with missing scores")
     parser.add_argument("--collect-only", action="store_true", help="Save chatbot outputs without calling the judge")
     parser.add_argument("--answers-from", type=Path, help="Reuse/wait for records from a separate collection run")
     args = parser.parse_args()
+    if (args.batch is not None or args.next_batch) and (args.limit is not None or args.collect_only):
+        parser.error("Batch scoring cannot be combined with --limit or --collect-only")
+    if args.batch is not None and args.next_batch:
+        parser.error("Choose --batch or --next-batch")
     # Prevent duplicate API charges if the same output is started twice.
     import fcntl
     args.output.mkdir(parents=True, exist_ok=True)
@@ -206,8 +242,11 @@ async def main():
     metadata_path = args.output / "metadata.json"
     if metadata_path.exists():
         previous = read_json(metadata_path)
-        if any(previous.get(k) != v for k, v in metadata.items()):
+        compared = {k: v for k, v in metadata.items()
+                    if not (args.collect_only and k in ("judge", "judge_provider"))}
+        if any(previous.get(k) != v for k, v in compared.items()):
             raise ValueError("Dataset/index/judge configuration changed; use a new --output directory")
+        metadata = previous
     else:
         metadata["started_at"] = datetime.now(timezone.utc).isoformat()
         write_json(metadata_path, metadata)
@@ -218,7 +257,27 @@ async def main():
             if source_metadata[field] != metadata[field]:
                 raise ValueError(f"Source collection has different {field}")
     metrics = None
-    if not args.collect_only:
+    selected = rows
+    if args.batch is not None or args.next_batch:
+        batches = [select_batch(rows, n) for n in range(1, math.ceil(len(rows) / 10) + 1)]
+        statuses = []
+        for number, batch_rows in enumerate(batches, 1):
+            done = sum(scored(read_json(args.output / "records" / f"{r['id']}.json"))
+                       for r in batch_rows if (args.output / "records" / f"{r['id']}.json").exists())
+            statuses.append({"batch": number, "ids": [r["id"] for r in batch_rows],
+                             "scored": done, "total": len(batch_rows)})
+        write_json(args.output / "batches.json", statuses)
+        number = args.batch if args.batch is not None else next(
+            (s["batch"] for s in statuses if s["scored"] < s["total"]), None)
+        if number is None:
+            print("All batches are already scored.", flush=True)
+            report(args.output, rows, metadata)
+            return
+        selected = select_batch(rows, number)
+        print(f"Batch {number}/{len(batches)}: {selected[0]['id']} through {selected[-1]['id']}", flush=True)
+    needs_judge = any(not (args.output / "records" / f"{r['id']}.json").exists()
+                      or not scored(read_json(args.output / "records" / f"{r['id']}.json")) for r in selected)
+    if not args.collect_only and needs_judge:
         try:
             metrics = build_metrics(model, manifest["model"])
         except Exception as exc:
@@ -228,9 +287,9 @@ async def main():
                 "checked_at": datetime.now(timezone.utc).isoformat()})
             raise
         write_json(args.output / "judge_status.json", {"ready": True, "judge": model})
-    for number, row in enumerate(rows, 1):
+    for number, row in enumerate(selected, 1):
         checkpoint = args.output / "records" / f"{row['id']}.json"
-        print(f"[{number}/{len(rows)}] {row['id']}", flush=True)
+        print(f"[{number}/{len(selected)}] {row['id']}", flush=True)
         if checkpoint.exists():
             record = read_json(checkpoint)
         elif args.answers_from:
@@ -246,7 +305,15 @@ async def main():
             write_json(checkpoint, record)
             print(f"  generation {record['latency_seconds']}s; status={record.get('http_status')}", flush=True)
         if "response" in record and metrics is not None:
-            await score(record, metrics, checkpoint)
+            try:
+                await score(record, metrics, checkpoint)
+            except Exception as exc:
+                report(args.output, rows, metadata)
+                write_json(args.output / "judge_status.json", {
+                    "ready": False, "error": type(exc).__name__,
+                    "checked_at": datetime.now(timezone.utc).isoformat()})
+                print("Scoring stopped; checkpoints saved. Resume after quota is available.", flush=True)
+                raise
         report(args.output, rows, metadata)
     print(json.dumps(report(args.output, rows, metadata), indent=2), flush=True)
 

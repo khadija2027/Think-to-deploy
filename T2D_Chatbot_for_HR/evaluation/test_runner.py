@@ -3,10 +3,24 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from run_ragas import load_dataset, reconstruct_contexts, report
+from run_ragas import load_dataset, reconstruct_contexts, report, select_batch, scored, ANSWER_METRICS
 
 
 class EvaluationTests(unittest.TestCase):
+    def test_nine_batches_cover_dataset_without_overlap(self):
+        rows = list(range(90))
+        batches = [select_batch(rows, n) for n in range(1, 10)]
+        self.assertEqual([r for batch in batches for r in batch], rows)
+        self.assertTrue(all(len(batch) == 10 for batch in batches))
+        for invalid in (0, 10):
+            with self.assertRaises(ValueError):
+                select_batch(rows, invalid)
+
+    def test_zero_scores_are_complete_but_errors_are_not(self):
+        self.assertTrue(scored(dict(category='answerable', metrics=dict.fromkeys(ANSWER_METRICS, 0))))
+        self.assertFalse(scored(dict(category='answerable', metrics={}, metric_errors=dict.fromkeys(ANSWER_METRICS, 'RateLimitError'))))
+        self.assertTrue(scored(dict(category='unanswerable', metrics={'appropriate_abstention': 0})))
+
     def test_duplicate_ids_are_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / 'dataset.json'
