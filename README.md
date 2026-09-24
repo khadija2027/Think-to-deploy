@@ -66,8 +66,13 @@ indexing failure leaves the last successful index available; input files are nev
 moved or deleted. The corpus limit is 5,000 chunks and each source file is limited
 to 50 MB. Exceeding a limit fails the run instead of silently omitting content.
 
+To recreate intermediate files for an unchanged corpus, trigger the DAG manually
+with `{"force_rebuild": true}` as its configuration. This preserves the normal
+idempotent behavior of scheduled runs.
+
 Airflow passes only working-directory paths through XCom. Intermediate JSON files
-and reports live on `pipeline-data`; vectors and matching chunks live on `rag-index`.
+and reports live in `T2D_Chatbot_for_HR/pipeline_work/` on the host; vectors and
+matching chunks live on `rag-index`.
 PostgreSQL holds Airflow metadata, not chat history. Old index snapshots and working
 files are retained for debugging; this demo does not automatically prune them.
 

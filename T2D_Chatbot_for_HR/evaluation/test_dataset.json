@@ -1,0 +1,812 @@
+[
+  {
+    "id": "hr_001",
+    "user_input": "À qui s’applique le règlement intérieur ?",
+    "reference": "Il s’applique aux salariés du périmètre défini, sous réserve des dispositions particulières concernant notamment les stagiaires, intérimaires, prestataires, visiteurs et personnels détachés.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_002",
+    "user_input": "Quelle règle faut-il appliquer en cas de contradiction entre deux documents RH ?",
+    "reference": "La règle légale ou conventionnelle pertinente et la version locale officiellement validée doivent être appliquées en priorité. En cas de doute, il faut consulter les RH ou le service juridique.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_003",
+    "user_input": "Le manuel de l’employé remplace-t-il mon contrat de travail ?",
+    "reference": "Non. Le manuel constitue un guide pratique et ne remplace pas le contrat, les accords collectifs, le règlement intérieur local ni les textes légaux.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_004",
+    "user_input": "Quelles sont mes responsabilités générales en tant que salarié ?",
+    "reference": "Le salarié doit connaître les règles, protéger les personnes, les actifs et les informations, demander conseil en cas de doute et signaler les situations à risque.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_005",
+    "user_input": "Que dois-je faire si je perds mon badge ?",
+    "reference": "La perte du badge doit être signalée immédiatement selon la procédure de l’établissement.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_006",
+    "user_input": "Puis-je faire entrer un visiteur sans l’enregistrer ?",
+    "reference": "Non. Les règles d’identification, d’accès, d’enregistrement et, si nécessaire, d’accompagnement des visiteurs doivent être respectées.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_007",
+    "user_input": "Puis-je faire des heures supplémentaires sans autorisation ?",
+    "reference": "Les heures supplémentaires ou complémentaires doivent respecter la procédure locale et l’autorisation requise.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_008",
+    "user_input": "Que faire si mon relevé d’heures est incorrect ?",
+    "reference": "Il faut demander sa correction par le canal prévu dans l’établissement ou le SIRH.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_009",
+    "user_input": "Puis-je télétravailler quand je veux ?",
+    "reference": "Le télétravail dépend de l’éligibilité du poste, des accords applicables, de l’autorisation requise et du respect des règles de sécurité de l’information.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_010",
+    "user_input": "Que faire si ma charge de travail devient excessive ?",
+    "reference": "Il faut en parler au manager ou aux RH. Les temps de repos doivent être respectés et une surcharge durable doit être signalée.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_011",
+    "user_input": "Que dois-je faire si je constate une situation dangereuse ?",
+    "reference": "Il faut sécuriser la zone sans se mettre en danger, alerter le dispositif local ou les secours, suivre les instructions et déclarer l’événement.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_012",
+    "user_input": "Dois-je déclarer un presque-accident ?",
+    "reference": "Oui. Les presque-accidents et situations dangereuses doivent être signalés afin de prévenir leur répétition.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_013",
+    "user_input": "Puis-je intervenir sur une machine sans habilitation ?",
+    "reference": "Non. Une intervention peut nécessiter une autorisation, une habilitation et une formation. Il est interdit de neutraliser un dispositif de sécurité.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_014",
+    "user_input": "Le port des équipements de protection est-il obligatoire ?",
+    "reference": "Oui lorsque les consignes du poste ou de la zone l’exigent.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_015",
+    "user_input": "À qui parler si je ressens un stress professionnel important ?",
+    "reference": "Le salarié peut contacter son manager, les RH, la médecine du travail, le service de santé, les représentants du personnel ou le dispositif d’alerte selon le contexte.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_016",
+    "user_input": "Quels comportements sont incompatibles avec le code de conduite ?",
+    "reference": "Le harcèlement, la discrimination, les menaces, l’intimidation, les violences, les représailles et les comportements humiliants ou offensants sont incompatibles avec le code de conduite.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_017",
+    "user_input": "Que faire si je pense être victime de harcèlement ?",
+    "reference": "Il faut conserver les éléments factuels utiles et contacter un interlocuteur habilité ou le dispositif d’alerte. En cas de danger immédiat, il faut utiliser les canaux d’urgence.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_018",
+    "user_input": "Puis-je signaler des faits sans disposer d’une preuve définitive ?",
+    "reference": "Oui. Un signalement peut être effectué de bonne foi lorsque la personne estime sincèrement les faits exacts.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_019",
+    "user_input": "Le chatbot peut-il déterminer juridiquement s’il s’agit de harcèlement ?",
+    "reference": "Non. Le chatbot peut présenter la procédure et les canaux disponibles, mais il ne doit ni qualifier juridiquement les faits ni conduire une enquête.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_020",
+    "user_input": "Puis-je partager mon mot de passe avec un collègue ?",
+    "reference": "Non. Les identifiants et mots de passe sont personnels et ne doivent jamais être partagés.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_021",
+    "user_input": "Que faire si je reçois un courriel suspect ?",
+    "reference": "Il ne faut pas cliquer sur les liens ou pièces jointes. Le message doit être signalé immédiatement par le canal de cybersécurité prévu.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_022",
+    "user_input": "Puis-je utiliser une intelligence artificielle publique avec des documents internes ?",
+    "reference": "Uniquement si l’outil et l’usage ont été officiellement autorisés et si les règles de confidentialité et de protection des données sont respectées.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_023",
+    "user_input": "Que faire si j’envoie un document confidentiel au mauvais destinataire ?",
+    "reference": "Il faut signaler immédiatement l’incident au support ou au canal de sécurité désigné et ne pas dissimuler l’erreur.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_024",
+    "user_input": "Puis-je accepter un cadeau d’un fournisseur ?",
+    "reference": "Le cadeau doit être légal, raisonnable, transparent et sans influence indue. Il faut vérifier les seuils locaux et obtenir l’autorisation nécessaire.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_025",
+    "user_input": "Que faire si un membre de ma famille travaille pour un fournisseur ?",
+    "reference": "Il faut déclarer le conflit d’intérêts potentiel avant de participer à une décision concernant ce fournisseur.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_026",
+    "user_input": "Que faire si une opération commerciale semble non conforme ?",
+    "reference": "Il faut suspendre l’action lorsque cela est possible, demander conseil et conserver une trace de l’avis reçu.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_027",
+    "user_input": "Par quel canal puis-je effectuer un signalement éthique ?",
+    "reference": "Selon la situation, le salarié peut contacter le manager, les RH, Éthique et Conformité, le service juridique, la sûreté, le HSE, les représentants du personnel ou le dispositif d’alerte.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_028",
+    "user_input": "Le chatbot peut-il me dire quelle sanction je vais recevoir ?",
+    "reference": "Non. Il peut expliquer les principes et citer la procédure, mais il ne peut ni prédire ni annoncer une sanction individuelle.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_029",
+    "user_input": "Quel est le numéro exact du dispositif d’alerte de mon site ?",
+    "reference": "Le document ne fournit pas ce numéro. Il doit être renseigné dans la version locale validée ou obtenu auprès des RH.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "unanswerable"
+  },
+  {
+    "id": "hr_030",
+    "user_input": "Combien de jours de télétravail sont autorisés sur mon site ?",
+    "reference": "Le document ne fixe pas de nombre de jours. Cette information dépend de l’accord et de la procédure locale applicables.",
+    "reference_sources": [
+      "guide_rh_safran_modele_non_officiel.pdf"
+    ],
+    "category": "unanswerable"
+  },
+  {
+    "id": "hr_031",
+    "user_input": "Comment demander un congé payé ?",
+    "reference": "Il faut consulter son solde dans le SIRH, saisir les dates souhaitées dans l’outil officiel et attendre la validation.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_032",
+    "user_input": "Puis-je partir en congé avant la validation de mon manager ?",
+    "reference": "Non. Sauf disposition particulière, l’absence est considérée comme autorisée uniquement après validation dans le canal officiel.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_033",
+    "user_input": "Puis-je réserver mon voyage avant la validation de mes congés ?",
+    "reference": "Il est recommandé d’attendre l’accord officiel avant toute réservation non remboursable.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_034",
+    "user_input": "Où puis-je consulter mon solde de congés ?",
+    "reference": "Le solde exact doit être consulté dans le SIRH authentifié ou confirmé par les RH.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_035",
+    "user_input": "Puis-je reporter mes jours de congé non utilisés ?",
+    "reference": "Le report dépend du motif, de la période et des règles légales, conventionnelles ou locales applicables.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_036",
+    "user_input": "Mon manager peut-il refuser ma demande de congé ?",
+    "reference": "La demande peut être examinée au regard des règles, des besoins de fonctionnement et de l’équité. Le refus doit respecter la procédure locale.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_037",
+    "user_input": "Mon manager doit-il expliquer le refus de mes congés ?",
+    "reference": "Un refus ou une proposition de nouvelles dates doit être expliqué conformément aux pratiques locales.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_038",
+    "user_input": "Comment préparer mon départ en congé ?",
+    "reference": "Il faut mettre à jour ses dossiers, organiser le relais avec le manager et configurer un message d’absence sans information sensible.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_039",
+    "user_input": "Dois-je consulter mes courriels pendant mes congés ?",
+    "reference": "Le rapport recommande de respecter le repos et le droit à la déconnexion, sauf dispositif formel particulier.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_040",
+    "user_input": "Que dois-je faire si je suis malade ?",
+    "reference": "Il faut prévenir rapidement le manager ou le contact désigné, puis transmettre le justificatif au destinataire habilité dans le délai applicable.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_041",
+    "user_input": "Dois-je préciser ma maladie à mon manager ?",
+    "reference": "Non. Le salarié informe le manager de son indisponibilité et, si elle est connue, de sa durée probable. Le diagnostic ne doit pas être communiqué.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_042",
+    "user_input": "À qui dois-je envoyer mon arrêt de travail ?",
+    "reference": "L’arrêt doit être envoyé au destinataire habilité indiqué dans la procédure locale, généralement les RH ou le service administratif compétent.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_043",
+    "user_input": "Que faire si mon arrêt de travail est prolongé ?",
+    "reference": "Il faut informer l’entreprise et transmettre le justificatif de prolongation selon la même procédure.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_044",
+    "user_input": "Que faire en cas d’accident du travail ?",
+    "reference": "L’accident doit être signalé immédiatement. En cas d’urgence, il faut contacter les secours et sécuriser les personnes avant les démarches administratives.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_045",
+    "user_input": "Mon manager peut-il consulter mon dossier médical ?",
+    "reference": "Non. Le manager reçoit uniquement les informations nécessaires à l’organisation du travail. Les données médicales sont réservées aux professionnels habilités.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_046",
+    "user_input": "Le chatbot peut-il interpréter mon certificat médical ?",
+    "reference": "Non. Il peut orienter vers les bons acteurs, mais il ne doit pas interpréter un certificat ni fournir un avis médical.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_047",
+    "user_input": "Comment demander un congé maternité ?",
+    "reference": "Il faut informer les RH selon les échéances applicables et transmettre les pièces requises. Les modalités précises doivent être vérifiées localement.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_048",
+    "user_input": "Comment demander un congé paternité ?",
+    "reference": "Il faut déclarer les dates souhaitées dans le délai prévu. Le fractionnement et l’indemnisation dépendent des règles applicables.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_049",
+    "user_input": "Existe-t-il un congé en cas d’adoption ?",
+    "reference": "Oui, sous réserve des textes applicables. Il faut contacter les RH pour organiser les dates et fournir les justificatifs.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_050",
+    "user_input": "Comment demander un congé parental ?",
+    "reference": "Il faut présenter une demande écrite dans les délais et vérifier les conditions d’ancienneté, la durée et les modalités de retour.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_051",
+    "user_input": "Puis-je m’absenter en cas de décès d’un proche ?",
+    "reference": "Oui, selon le lien familial et les règles applicables. Il faut informer rapidement l’entreprise et fournir les pièces nécessaires.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_052",
+    "user_input": "Puis-je prendre un congé pour suivre une formation ?",
+    "reference": "Un congé de formation peut exister. Il faut vérifier l’éligibilité, le financement, le calendrier et la procédure de demande.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_053",
+    "user_input": "Existe-t-il un congé de proche aidant ?",
+    "reference": "Un dispositif peut être disponible. Il faut vérifier le lien avec la personne, la durée, les justificatifs et l’indemnisation.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_054",
+    "user_input": "Puis-je demander un congé sabbatique ?",
+    "reference": "Cela peut être possible sous certaines conditions. Il faut vérifier l’ancienneté, l’autorisation, la durée et les modalités de retour.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_055",
+    "user_input": "Quelle est la procédure standard de demande d’absence ?",
+    "reference": "Il faut identifier le type d’absence, vérifier les conditions, saisir la demande dans le canal officiel, attendre la décision puis contrôler son traitement.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_056",
+    "user_input": "Que faire si ma demande d’absence est refusée ?",
+    "reference": "Le salarié peut demander les motifs, vérifier la règle applicable et solliciter les RH si la décision paraît incohérente.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_057",
+    "user_input": "Comment transmettre un justificatif ?",
+    "reference": "Il faut utiliser exclusivement le canal officiel et sécurisé prévu par l’entreprise.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_058",
+    "user_input": "Dois-je transmettre mon dossier médical complet ?",
+    "reference": "Non. Il faut transmettre uniquement le justificatif nécessaire. Un dossier médical complet ne doit pas être envoyé si un document administratif suffit.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_059",
+    "user_input": "Combien de jours de congé me reste-t-il exactement ?",
+    "reference": "Le document ne contient pas le solde individuel. Cette donnée doit provenir du SIRH authentifié.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "unanswerable"
+  },
+  {
+    "id": "hr_060",
+    "user_input": "Quel sera le montant exact de mon salaire après un congé sans solde ?",
+    "reference": "Le document ne permet pas de calculer un montant individuel. Une vérification ou une simulation par le service paie est nécessaire.",
+    "reference_sources": [
+      "guide_conges_absences_safran_modele.docx"
+    ],
+    "category": "unanswerable"
+  },
+  {
+    "id": "hr_061",
+    "user_input": "Les avantages sociaux sont-ils identiques dans toutes les entités Safran ?",
+    "reference": "Non. Ils peuvent varier selon le pays, l’entité, le statut du salarié et les accords applicables.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_062",
+    "user_input": "Quelle est la source fiable pour connaître mes avantages individuels ?",
+    "reference": "Le SIRH, le portail avantages et les services RH confirment l’éligibilité, les ayants droit, les montants et les demandes en cours.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_063",
+    "user_input": "Que doit faire le chatbot si deux sources sur les avantages se contredisent ?",
+    "reference": "Il doit reconnaître la contradiction, ne pas inventer de réponse et orienter le salarié vers les RH.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_064",
+    "user_input": "Comment savoir si la couverture santé est obligatoire ?",
+    "reference": "Il faut consulter le contrat collectif ou la notice du régime applicable à l’entité et au pays.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_065",
+    "user_input": "Puis-je ajouter des ayants droit à ma couverture santé ?",
+    "reference": "L’ajout éventuel des ayants droit dépend du contrat collectif. Il faut vérifier les personnes éligibles et les justificatifs requis.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_066",
+    "user_input": "Quel canal faut-il utiliser pour transmettre des données de santé ?",
+    "reference": "Il faut utiliser le canal officiel sécurisé prévu par l’entreprise. Les données de santé restent accessibles uniquement aux personnes habilitées.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_067",
+    "user_input": "Que couvre la prévoyance en cas d’incapacité ?",
+    "reference": "Selon le régime applicable, la prévoyance peut prévoir un maintien ou un complément de revenu.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_068",
+    "user_input": "Que peut prévoir la prévoyance en cas d’invalidité ?",
+    "reference": "Elle peut prévoir une protection en cas de réduction durable de la capacité de travail, selon les conditions du régime.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_069",
+    "user_input": "Que peut prévoir la prévoyance en cas de décès ?",
+    "reference": "Elle peut prévoir un capital ou une rente versé aux bénéficiaires désignés, selon le contrat applicable.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_070",
+    "user_input": "Où trouver les détails des garanties de prévoyance ?",
+    "reference": "Il faut consulter la notice du régime et contacter les RH ou l’assureur pour une situation individuelle.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_071",
+    "user_input": "Quels types de dispositifs de retraite peuvent exister ?",
+    "reference": "Les dispositifs peuvent combiner un régime obligatoire, un complément éventuel et des services d’information ou d’accompagnement.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_072",
+    "user_input": "Quels dispositifs d’épargne salariale peuvent être proposés ?",
+    "reference": "Selon les accords applicables, des mécanismes d’intéressement, de participation ou des plans d’épargne peuvent exister.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_073",
+    "user_input": "Que faut-il vérifier avant de choisir un placement d’épargne salariale ?",
+    "reference": "Il faut consulter les documents officiels, comparer les horizons de placement et vérifier la fiscalité locale.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_074",
+    "user_input": "Le chatbot peut-il me donner un conseil financier personnalisé ?",
+    "reference": "Non. Une question financière personnelle nécessite un portail sécurisé ou un interlocuteur habilité.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_075",
+    "user_input": "Quels avantages peuvent concerner le transport ?",
+    "reference": "Une prise en charge ou une aide au transport peut exister selon le pays, le site, les horaires et les règles locales.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_076",
+    "user_input": "Quels services de restauration peuvent être proposés ?",
+    "reference": "Selon l’établissement, un restaurant ou des titres de restauration peuvent être proposés, avec des tarifs et conditions d’accès locaux.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_077",
+    "user_input": "Où vérifier les services disponibles sur mon site ?",
+    "reference": "Il faut consulter le portail de l’établissement et les communications RH locales.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_078",
+    "user_input": "Quels dispositifs peuvent favoriser l’équilibre de vie ?",
+    "reference": "Les dispositifs peuvent inclure des congés, des autorisations d’absence, du télétravail lorsque le poste le permet et des aménagements prévus par les accords.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_079",
+    "user_input": "Quels avantages peuvent accompagner la parentalité ?",
+    "reference": "Ils peuvent concerner la naissance ou l’adoption, le congé parental et l’accompagnement du retour, selon les règles applicables.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_080",
+    "user_input": "Existe-t-il un accompagnement pour les proches aidants ?",
+    "reference": "Un accompagnement peut exister selon les dispositifs locaux. Il faut vérifier les conditions auprès des RH.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_081",
+    "user_input": "Quel est le rôle des Ressources humaines concernant les avantages ?",
+    "reference": "Les RH orientent vers les dispositifs et traitent les démarches administratives relevant de leur compétence.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_082",
+    "user_input": "Quel est le rôle de la santé au travail ?",
+    "reference": "La santé au travail évalue les besoins de santé et recommande les aménagements utiles dans le respect de la confidentialité.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_083",
+    "user_input": "Quel est le rôle de l’assistance sociale ?",
+    "reference": "Elle accompagne les difficultés personnelles dans un cadre confidentiel.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_084",
+    "user_input": "Quel est le rôle du manager dans l’accès aux avantages ?",
+    "reference": "Le manager organise le travail et oriente le salarié vers les interlocuteurs compétents.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_085",
+    "user_input": "Quelles sont les étapes pour utiliser un avantage social ?",
+    "reference": "Il faut identifier le dispositif, vérifier les conditions, effectuer la demande dans le canal officiel, suivre son statut puis contrôler son effet.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_086",
+    "user_input": "Les demandes d’avantages individuels nécessitent-elles une authentification ?",
+    "reference": "Oui. L’authentification est requise pour l’éligibilité, les montants, les ayants droit et les demandes en cours.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_087",
+    "user_input": "À quelles questions le chatbot peut-il répondre sur les avantages ?",
+    "reference": "Il peut expliquer comment accéder au portail, quels justificatifs préparer et qui contacter pour une question générale.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_088",
+    "user_input": "Dans quels cas le chatbot doit-il orienter vers un interlocuteur ?",
+    "reference": "Il doit orienter pour un montant ou une éligibilité individuelle, une question médicale ou financière personnelle, ou une source absente, contradictoire ou périmée.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "answerable"
+  },
+  {
+    "id": "hr_089",
+    "user_input": "Quel est le montant exact de ma cotisation santé ?",
+    "reference": "La présentation ne contient aucun montant individuel. Cette donnée doit être consultée dans le portail sécurisé ou auprès des RH.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "unanswerable"
+  },
+  {
+    "id": "hr_090",
+    "user_input": "Quel est le plafond exact de remboursement de mes lunettes ?",
+    "reference": "La présentation ne contient aucun niveau de remboursement. Il faut consulter le tableau de garanties du régime applicable.",
+    "reference_sources": [
+      "avantages_sociaux_safran_modele.pptx"
+    ],
+    "category": "unanswerable"
+  }
+]

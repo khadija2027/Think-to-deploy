@@ -10,3 +10,4 @@ T2D_Chatbot_for_HR/logs
 T2D_Chatbot_for_HR/dags/*.pkl
 T2D_Chatbot_for_HR/dags/*.index
 T2D_Chatbot_for_HR/backend
+T2D_Chatbot_for_HR/pipeline_work

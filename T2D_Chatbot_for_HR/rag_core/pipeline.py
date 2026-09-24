@@ -21,7 +21,7 @@ MAX_CHUNKS = 5000
 PIPELINE_VERSION = 3
 
 
-def discover(run_id):
+def discover(run_id, force=False):
     dataset = Path(os.environ.get("DATASET_DIR", PROJECT_ROOT / "dataset"))
     if not dataset.is_dir():
         raise ValueError(f"Dataset directory does not exist: {dataset}")
@@ -41,9 +41,9 @@ def discover(run_id):
                  "pipeline_version": PIPELINE_VERSION}
     fingerprint = hashlib.sha256(json.dumps(signature, sort_keys=True).encode()).hexdigest()
     previous = current_manifest()
-    if previous and previous.get("fingerprint") == fingerprint:
+    if not force and previous and previous.get("fingerprint") == fingerprint:
         return None
-    if not files and previous is None:
+    if not force and not files and previous is None:
         return None
     work_root = Path(os.environ.get("PIPELINE_WORK_DIR", PROJECT_ROOT / "pipeline_work"))
     work = work_root / hashlib.sha256(run_id.encode()).hexdigest()[:24]

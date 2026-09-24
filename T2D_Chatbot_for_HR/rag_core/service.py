@@ -1,6 +1,7 @@
 """Lazy retrieval from the exact snapshot published by Airflow."""
 import logging
 import os
+import re
 from threading import RLock
 
 from .storage import current_manifest, index_directory, read_json, snapshot_directory
@@ -13,7 +14,9 @@ Rédige toujours toute la réponse en français, même lorsque les documents son
 anglais. Traduis les informations utiles en français sans modifier leur sens.
 Conserve uniquement les noms propres, sigles et noms de fichiers dans leur langue
 d'origine. Cite les documents avec [Source: nom_du_document].
-Si l'information est absente, réponds en français :
+Donne uniquement la réponse finale à la question, sans raisonnement interne,
+sans décrire ton analyse ni les étapes suivies. Réponds directement et brièvement.
+Si l'information est absente, réponds uniquement en français :
 Je ne trouve pas cette information dans les documents fournis."""
 
 
@@ -114,9 +117,23 @@ class RAGService:
         return {"answer": self.generator(prompt), "sources": sources, "index_version": version}
 
 
+def final_answer_only(answer):
+    """Discard reasoning blocks, including incomplete generations, at the API boundary."""
+    if not isinstance(answer, str):
+        raise ValueError("Invalid generation")
+    # A raw completion can start inside an already opened thinking block.
+    if "</think>" in answer:
+        answer = answer.rsplit("</think>", 1)[-1]
+    answer = re.sub(r"<think\b[^>]*>.*", "", answer, flags=re.DOTALL | re.IGNORECASE)
+    answer = answer.strip()
+    if not answer:
+        raise ValueError("No final answer generated")
+    return answer
+
+
 def generate_answer(prompt):
     import requests
-    prompt += "\n\nRÉPONSE EN FRANÇAIS (avec les citations des sources) :"
+    prompt += "\n\nRéponds en 200 mots maximum, avec les citations des sources.\nRÉPONSE EN FRANÇAIS :"
     key = os.environ.get("OPENROUTER_API_KEY", "").strip()
     if key and os.environ.get("LLM_PROVIDER", "auto") != "ollama":
         try:
@@ -129,7 +146,7 @@ def generate_answer(prompt):
             response.raise_for_status()
             answer = response.json()["choices"][0]["message"]["content"]
             if isinstance(answer, str) and answer.strip():
-                return answer.strip()
+                return final_answer_only(answer)
         except (requests.RequestException, ValueError, KeyError, IndexError, TypeError):
             logger.warning("OpenRouter unavailable; trying Ollama")
     try:
@@ -148,15 +165,20 @@ def generate_answer(prompt):
                   "system": "" if is_qwen3 else SYSTEM_PROMPT, "prompt": local_prompt, "stream": False,
                   "raw": is_qwen3,
                   "think": False,
-                  "options": {"temperature": 0.1, "num_ctx": 4096, "num_predict": 1024}}, timeout=(10, 240))
+                  # CPU generation plus prompt evaluation can exceed four minutes.
+                  "options": {"temperature": 0.1, "num_ctx": 4096, "num_predict": 512}}, timeout=(10, 600))
         response.raise_for_status()
         answer = response.json()["response"]
-        if isinstance(answer, str) and "</think>" in answer:
-            answer = answer.rsplit("</think>", 1)[-1]
-        elif is_qwen3 and isinstance(answer, str) and answer.strip():
+        had_thinking_end = isinstance(answer, str) and "</think>" in answer
+        answer = final_answer_only(answer)
+        if is_qwen3 and not had_thinking_end:
             answer = answer_prefix + answer
         if not isinstance(answer, str) or not answer.strip():
             raise ValueError("Empty generation")
         return answer.strip()
+    except requests.Timeout as exc:
+        logger.warning("Ollama generation timed out (%s)", type(exc).__name__)
+        raise GenerationUnavailable("Le modèle met trop de temps à répondre. Réessayez avec une question plus précise.") from exc
     except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
+        logger.warning("Ollama generation failed (%s)", type(exc).__name__)
         raise GenerationUnavailable("Le modèle de réponse est indisponible. Configurez OpenRouter ou démarrez Ollama avec le modèle configuré.") from exc

@@ -851,10 +851,6 @@
                 loadingMessage.remove();
                 if (data.answer) {
                     appendMessage('assistant', data.answer);
-                    if (data.sources && data.sources.length) {
-                        const sources = [...new Set(data.sources.map(source => source.document))];
-                        appendMessage('assistant', 'Documents consultés : ' + sources.join(', '));
-                    }
                 } else {
                     const detail = typeof data.detail === 'string' ? data.detail : 'Question invalide.';
                     appendMessage('assistant', data.error || detail);

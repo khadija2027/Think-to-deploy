@@ -18,7 +18,9 @@ x-airflow-common: &airflow-common
     - ./T2D_Chatbot_for_HR/dags:/opt/airflow/dags:ro
     - ./T2D_Chatbot_for_HR/dataset:/opt/airflow/dataset:ro
     - airflow-logs:/opt/airflow/logs
-    - pipeline-data:/opt/airflow/pipeline
+    # Keep intermediate artifacts on the host for inspection and debugging.
+    # Each run writes parsed.json, anonymized.json, chunks.json and report.json.
+    - ./T2D_Chatbot_for_HR/pipeline_work:/opt/airflow/pipeline
     - rag-index:/opt/airflow/index
     - airflow-model-cache:/opt/airflow/model-cache
   depends_on:
@@ -108,7 +110,6 @@ services:
 volumes:
   postgres-data:
   airflow-logs:
-  pipeline-data:
   rag-index:
   airflow-model-cache:
   api-model-cache:

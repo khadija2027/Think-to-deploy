@@ -9,7 +9,11 @@ from airflow.operators.python import PythonOperator
 from rag_core import pipeline
 
 def discover_documents(**context):
-    work = pipeline.discover(context["run_id"])
+    # A manual trigger may use {"force_rebuild": true} to regenerate
+    # intermediate JSON artifacts even when the corpus fingerprint is unchanged.
+    configuration = context["dag_run"].conf or {}
+    force_rebuild = configuration.get("force_rebuild") is True
+    work = pipeline.discover(context["run_id"], force=force_rebuild)
     if work is None:
         raise AirflowSkipException("No documents yet, or the published corpus is unchanged.")
     return work
